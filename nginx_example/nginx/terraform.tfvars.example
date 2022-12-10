@@ -1,0 +1,11 @@
+app_gateway_subnet_id = ""
+prefix                = "ABC"
+location              = "eastus"
+vmss_admin_username   = "nginxAdmin"
+vmss_source_image = {
+  publisher = "Canonical"
+  offer     = "UbuntuServer"
+  sku       = "18.04-LTS"
+  version   = "latest"
+}
+vmss_subnet_id = ""
