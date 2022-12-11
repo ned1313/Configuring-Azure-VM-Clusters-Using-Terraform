@@ -5,7 +5,7 @@ resource "azurerm_storage_account" "main" {
   account_tier                  = "Premium" # This is required for NFS shares
   account_replication_type      = "LRS"
   account_kind                  = "FileStorage"
-  public_network_access_enabled = true # Should be private for security
+  public_network_access_enabled = true  # Should be private for security
   enable_https_traffic_only     = false # Required for NFS shares with Private Endpoints
 }
 
@@ -16,13 +16,21 @@ resource "azurerm_storage_share" "main" {
   quota                = 100 # Minimum is 100GB for Premium storage
 }
 
+# Optional file resource to test web servers
+resource "azurerm_storage_share_file" "main" {
+  count            = var.index_file != null ? 1 : 0
+  name             = "index.html"
+  storage_share_id = azurerm_storage_share.main.id
+  source           = var.index_file
+}
+
 resource "azurerm_storage_account_network_rules" "main" {
   storage_account_id = azurerm_storage_account.main.id
-    default_action     = "Deny"
-    private_link_access {
-        endpoint_resource_id = azurerm_private_endpoint.main.id
-    }
-    ip_rules = ["100.19.93.30"]
+  default_action     = "Deny"
+  private_link_access {
+    endpoint_resource_id = azurerm_private_endpoint.main.id
+  }
+  ip_rules = ["100.19.93.30"]
 }
 
 resource "azurerm_private_dns_zone" "main" {

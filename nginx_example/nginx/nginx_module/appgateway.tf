@@ -11,7 +11,7 @@ data "azurerm_subnet" "app_gateway" {
 }
 
 data "azurerm_virtual_network" "main" {
-  name = split("/", var.app_gateway_subnet_id)[8]
+  name                = split("/", var.app_gateway_subnet_id)[8]
   resource_group_name = split("/", var.app_gateway_subnet_id)[4]
 }
 
