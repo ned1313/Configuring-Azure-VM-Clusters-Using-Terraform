@@ -11,6 +11,17 @@ sudo mount -t nfs $1.privatelink.file.core.windows.net:/$1/webshare /mount/$1/we
 # Install NGINX
 sudo apt-get install -y nginx
 
+# Create index html file and copy to file share
+if [ $2 = "true" ]
+then
+  if [ -f /mount/$1/webshare/index.html ]
+  then
+    echo "File already exists"
+  else
+    echo "<html><body><h2>Welcome to Azure! My name is $(hostname).</h2></body></html>" | sudo tee -a /mount/$1/webshare/index.html
+  fi
+fi
+
 # Change the NGINX configuration to use file share for webcontent
 sudo sed -i 's+/var/www/html+/mount/$1/webshare+g' /etc/nginx/sites-available/default
 
