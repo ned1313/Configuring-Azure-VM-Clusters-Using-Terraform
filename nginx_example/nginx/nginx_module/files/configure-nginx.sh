@@ -18,7 +18,7 @@ then
   then
     echo "File already exists"
   else
-    echo "<html><body><h2>Welcome to Azure! My name is $(hostname).</h2></body></html>" | sudo tee -a /mount/$1/webshare/index.html
+    echo "<html><body><h2>NGINX on NFS successful! File created by $(hostname).</h2></body></html>" | sudo tee -a /mount/$1/webshare/index.html
   fi
 fi
 
