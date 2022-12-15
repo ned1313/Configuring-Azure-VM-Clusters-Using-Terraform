@@ -23,7 +23,7 @@ then
 fi
 
 # Change the NGINX configuration to use file share for webcontent
-sudo sed -i 's+/var/www/html+/mount/$1/webshare+g' /etc/nginx/sites-available/default
+sudo sed -i "s+/var/www/html+/mount/$1/webshare+g" /etc/nginx/sites-available/default
 
 # Restart NGINX
 sudo systemctl restart nginx
