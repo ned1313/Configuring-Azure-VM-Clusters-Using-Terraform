@@ -1,0 +1,18 @@
+location = "LOCATION"
+resource_group = {
+  location = "LOCATION"
+  name     = "NAME"
+}
+prefix          = "XXX"
+vault_subnet_id = "SUBNET_ID"
+zones           = [1, 2, 3]
+vault_cert_pem  = <<EOF
+
+EOF
+vault_key_pem   = <<EOF
+
+EOF
+vault_ca_pem    = <<EOF
+
+EOF
+vault_san_name  = "FQDN_OF_CLUSTER"
