@@ -25,7 +25,7 @@ Connect to the proxy VM using SSH and the username and password specified in the
 ssh proxyadmin@PROXY_IP_ADDRESS
 ```
 
-You are going to initalize the Vault cluster by issuing commands to the first Vault node. 
+You are going to initalize the Vault cluster by issuing commands to the first Vault node.
 
 ```bash
 export VAULT_ADDR=https://FIRST_NODE_IP_ADDRESS:8200
@@ -59,6 +59,4 @@ export VAULT_ADDR=https://FQDN_OF_VAULT # Note we are using port 443 for the loa
 vault status
 
 vault login # Use the root token from the init command
-```
-```
 ```
