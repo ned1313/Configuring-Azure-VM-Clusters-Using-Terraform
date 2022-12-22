@@ -3,6 +3,8 @@ resource "azurerm_application_security_group" "main" {
   name                = "${var.prefix}-vmss-asg"
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
+
+  tags = var.common_tags
 }
 
 # Network security group
@@ -10,6 +12,8 @@ resource "azurerm_network_security_group" "nginx" {
   name                = "${var.prefix}-nginx"
   location            = data.azurerm_resource_group.main.location
   resource_group_name = data.azurerm_resource_group.main.name
+
+  tags = var.common_tags
 }
 
 # Network security rules
@@ -29,10 +33,6 @@ resource "azurerm_network_security_rule" "web_fe" {
   source_address_prefix                      = data.azurerm_subnet.app_gateway.address_prefixes[0]
 }
 
-locals {
-  nfs_mount_address = azurerm_private_endpoint.main.private_dns_zone_configs[0].record_sets[0].fqdn
-}
-
 resource "azurerm_linux_virtual_machine_scale_set" "main" {
   resource_group_name             = data.azurerm_resource_group.main.name
   location                        = data.azurerm_resource_group.main.location
@@ -41,6 +41,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "main" {
   instances                       = var.vmss_instances
   admin_username                  = var.vmss_admin_username
   disable_password_authentication = true
+  upgrade_mode                    = "Automatic"
+  tags                            = var.common_tags
 
   admin_ssh_key {
     username   = var.vmss_admin_username
@@ -87,8 +89,71 @@ resource "azurerm_virtual_machine_scale_set_extension" "nginx_deploy" {
 
   settings = jsonencode({
     fileUris = [
-      "https://raw.githubusercontent.com/MicrosoftDocs/mslearn-welcome-to-azure/master/configure-nginx.sh"
+      "https://raw.githubusercontent.com/ned1313/Configuring-Azure-VM-Clusters-Using-Terraform/main/nginx_example/nginx/nginx_module/files/configure-nginx.sh"
     ]
-    commandToExecute = "./configure-nginx.sh ${local.nfs_mount_address}"
+    commandToExecute = "./configure-nginx.sh ${azurerm_storage_account.main.name} ${var.create_index_html}"
   })
+}
+
+resource "azurerm_monitor_autoscale_setting" "main" {
+  name                = "CPUAutoScale"
+  resource_group_name = data.azurerm_resource_group.main.name
+  location            = data.azurerm_resource_group.main.location
+  target_resource_id  = azurerm_linux_virtual_machine_scale_set.main.id
+
+  profile {
+    name = "defaultProfile"
+
+    capacity {
+      default = var.vmss_instances
+      minimum = var.vmss_autoscale_settings.instance_minimum_capacity
+      maximum = var.vmss_autoscale_settings.instance_maximum_capacity
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.main.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = var.vmss_autoscale_settings.cpu_max_threshold
+        metric_namespace   = "microsoft.compute/virtualmachinescalesets"
+        dimensions {
+          name     = "AppName"
+          operator = "Equals"
+          values   = ["App1"]
+        }
+      }
+
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "Percentage CPU"
+        metric_resource_id = azurerm_linux_virtual_machine_scale_set.main.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = var.vmss_autoscale_settings.cpu_min_threshold
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
 }

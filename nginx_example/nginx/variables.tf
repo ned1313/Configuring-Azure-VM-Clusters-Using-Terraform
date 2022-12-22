@@ -48,8 +48,8 @@ variable "vmss_subnet_id" {
   description = "The subnet ID of the VMSS"
 }
 
-variable "index_file" {
-  type        = string
-  description = "(Optional) Path to an index.html file for the website. Used for testing."
-  default     = null
+variable "create_index_html" {
+  type        = bool
+  description = "(Optional) Create an index.html file for the website. Used for testing."
+  default     = false
 }

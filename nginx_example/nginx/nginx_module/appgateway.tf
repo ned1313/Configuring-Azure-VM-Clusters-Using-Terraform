@@ -21,6 +21,7 @@ resource "azurerm_public_ip" "app_gateway" {
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
   allocation_method   = "Dynamic"
+  tags                = var.common_tags
 }
 
 locals {
@@ -37,6 +38,7 @@ resource "azurerm_application_gateway" "main" {
   name                = "${var.prefix}-app-gateway"
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
+  tags                = var.common_tags
 
   sku {
     name     = var.app_gateway_sku      # default Standard_Small

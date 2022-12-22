@@ -9,4 +9,4 @@ vmss_source_image = {
   version   = "latest"
 }
 vmss_subnet_id = ""
-index_file = "files/index.html"
+create_index_html = true

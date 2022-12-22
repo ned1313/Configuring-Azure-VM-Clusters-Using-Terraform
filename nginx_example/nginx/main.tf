@@ -34,7 +34,7 @@ module "name" {
   vmss_source_image     = var.vmss_source_image
   vmss_subnet_id        = var.vmss_subnet_id
   resource_group_name   = local.resource_group.name
-  index_file            = var.index_file
+  create_index_html     = var.create_index_html
 
   depends_on = [
     azurerm_resource_group.main

@@ -13,6 +13,18 @@ variable "prefix" {
   description = "The prefix to use for all resources in this module"
 }
 
+variable "frontend_port" {
+  type        = number
+  description = "The frontend port of the Application Gateway"
+  default     = 80
+}
+
+variable "backend_port" {
+  type        = number
+  description = "Backend port of the targer pool"
+  default     = 80
+}
+
 variable "app_gateway_sku" {
   type        = string
   description = "The SKU of the Application Gateway"
@@ -29,18 +41,6 @@ variable "app_gateway_capacity" {
   type        = number
   description = "The capacity of the Application Gateway"
   default     = 2
-}
-
-variable "frontend_port" {
-  type        = number
-  description = "The frontend port of the Application Gateway"
-  default     = 80
-}
-
-variable "backend_port" {
-  type        = number
-  description = "Backend port of the targer pool"
-  default     = 80
 }
 
 variable "vmss_sku" {
@@ -97,8 +97,41 @@ variable "vmss_subnet_id" {
   description = "The subnet ID of the VMSS"
 }
 
-variable "index_file" {
-  type        = string
-  description = "(Optional) Path to an index.html file for the website. Used for testing."
-  default     = null
+variable "vmss_autoscale_settings" {
+  type = object({
+    instance_minimum_capacity = number
+    instance_maximum_capacity = number
+    cpu_max_threshold         = number
+    cpu_min_threshold         = number
+  })
+  description = "(Optional) The autoscale settings of the VMSS"
+
+  default = {
+    instance_minimum_capacity = 2
+    instance_maximum_capacity = 10
+    cpu_max_threshold         = 75
+    cpu_min_threshold         = 25
+  }
+
+  validation {
+    condition     = var.vmss_autoscale_settings.instance_minimum_capacity < var.vmss_autoscale_settings.instance_maximum_capacity
+    error_message = "The instance_minimum_capacity must be less than the instance_maximum_capacity."
+  }
+
+  validation {
+    condition     = var.vmss_autoscale_settings.cpu_min_threshold < var.vmss_autoscale_settings.cpu_max_threshold
+    error_message = "The cpu_min_threshold must be less than the cpu_max_threshold."
+  }
+}
+
+variable "create_index_html" {
+  type        = bool
+  description = "(Optional) Create an index.html file for the website. Used for testing."
+  default     = false
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "(Optional) Tags to use for NGINX resources. Defaults to empty"
+  default     = {}
 }
