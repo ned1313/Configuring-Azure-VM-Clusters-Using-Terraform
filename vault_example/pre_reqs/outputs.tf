@@ -9,7 +9,7 @@ output "leader_tls_servername" {
   value = module.tls.shared_san
 }
 
-output "lb_backend_ca_cert" {
+output "vault_ca_pem" {
   value = module.tls.root_ca_pem
 }
 
@@ -33,10 +33,10 @@ output "virtual_network_name" {
   value = module.vnet.virtual_network_name
 }
 
-output "vault_cert_public_pem" {
+output "vault_cert_pem" {
   value = module.tls.node_cert_public_pem
 }
 
-output "vault_cert_private_pem" {
+output "vault_key_pem" {
   value = nonsensitive(module.tls.node_cert_private_pem)
 }

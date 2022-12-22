@@ -28,9 +28,3 @@ module "vnet" {
   nginx_address_prefix       = var.nginx_address_prefix
   app_gateway_address_prefix = var.app_gateway_address_prefix
 }
-
-module "certs" {
-  source = "./tls"
-
-
-}

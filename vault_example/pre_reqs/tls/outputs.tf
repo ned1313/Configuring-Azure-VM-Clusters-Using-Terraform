@@ -8,7 +8,7 @@ output "node_cert_public_pem" {
 
 output "node_cert_private_pem" {
   sensitive = true
-  value = tls_private_key.server.private_key_pem
+  value     = tls_private_key.server.private_key_pem
 }
 
 output "shared_san" {

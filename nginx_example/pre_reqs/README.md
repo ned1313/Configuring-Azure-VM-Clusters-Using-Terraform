@@ -1,6 +1,6 @@
 # Prerequisites
 
-We are going to generate TLS certificates based on a hostname. And we will provision a Virtual Network, Subnet, and NAT gateway. Since this is going to be an internal cluster, we will also need a bastion VM to connect to, so we'll provision an Azure VM in a separate subnet.
+We are going to create the networking resources for the NGINX cluster.
 
 ## Deploying the Prerequisites
 
@@ -20,4 +20,4 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Make note of the outputs, as you will need them to deploy Vault.
+Make note of the outputs, as you will need them to deploy NGINX.

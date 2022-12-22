@@ -72,6 +72,7 @@ variable "vmss_source_image" {
     sku       = string
     version   = string
   })
+  description = "Values for the source image of the VMSS"
 }
 
 variable "vmss_os_disk_storage_account_type" {
