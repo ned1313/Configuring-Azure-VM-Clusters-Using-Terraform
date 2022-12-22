@@ -24,7 +24,7 @@ locals {
   admin_public_key = var.vmss_admin_ssh_key == null ? tls_private_key.main[0].public_key_openssh : var.vmss_admin_ssh_key
 }
 
-module "" {
+module "name" {
   source = "./nginx_module"
 
   app_gateway_subnet_id = var.app_gateway_subnet_id
